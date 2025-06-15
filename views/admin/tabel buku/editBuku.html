@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edit Buku</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body style="background-color: #f0ecec;">
+  <script src="https://kit.fontawesome.com/808ba9c7d8.js" crossorigin="anonymous"></script>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light py-3" style="background-color: #11007e;">
+    <div class="container-fluid px-5">
+      <a href="#"><i class="fa-solid fa-chart-line logo-book"></i></a>
+      <h3 class="text-white fw-bold" style="margin-bottom: 0px;">Dashboard</h3>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-white" href="#" id="profilDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <span id="usernameDisplay">Profil</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profilDropdown">
+              <li><a class="dropdown-item" href="/logout">Logout</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Edit Form -->
+  <div class="container d-flex align-items-center">
+    <div class="container mt-5 mb-5 shadow-sm container-upload-buku">
+      <div class="row" style="margin: 10px;">
+        <div class="container d-flex justify-content-center mb-5">
+          <div class="row align-items-center">
+            <div class="col-auto">
+              <i class="fa-solid fa-pen-to-square logo-book fa-4x" style="color: #11007e;"></i>
+            </div>
+            <div class="col" style="max-width:max-content;">
+              <h1 class="fw-bold" style="color: #11007e;">Edit Buku</h1>
+            </div>
+          </div>
+        </div>
+
+        <form id="editForm" method="POST" enctype="multipart/form-data">
+          <div class="mb-3 row">
+            <label class="col-sm-3 col-form-label fw-bold">Judul Buku</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" name="judul" id="judul" required>
+            </div>
+          </div>
+
+          <div class="mb-3 row">
+            <label class="col-sm-3 col-form-label fw-bold">Penulis</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" name="penulis" id="penulis" required>
+            </div>
+          </div>
+
+          <div class="mb-3 row">
+            <label class="col-sm-3 col-form-label fw-bold">Penerbit</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" name="penerbit" id="penerbit" required>
+            </div>
+          </div>
+
+          <div class="mb-3 row">
+            <label class="col-sm-3 col-form-label fw-bold">Tahun Terbit</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" name="tahun_terbit" id="tahun_terbit" required>
+            </div>
+          </div>
+
+          <div class="mb-3 row">
+            <label class="col-sm-3 col-form-label fw-bold">Kategori</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" name="kategori" id="kategori" required>
+            </div>
+          </div>
+
+          <div class="mb-3 row">
+            <label class="col-sm-3 col-form-label fw-bold">Lokasi Rak</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" name="lokasi_rak" id="lokasi_rak" required>
+            </div>
+          </div>
+
+          <div class="mb-3 row">
+            <label class="col-sm-3 col-form-label fw-bold">Deskripsi</label>
+            <div class="col-sm-9">
+              <textarea class="form-control" name="deskripsi" id="deskripsi" rows="3" required></textarea>
+            </div>
+          </div>
+
+          <div class="mb-3 row">
+            <label class="col-sm-3 col-form-label fw-bold">Ganti Cover (opsional)</label>
+            <div class="col-sm-9">
+              <input type="file" class="form-control" name="cover" accept="image/*">
+            </div>
+          </div>
+
+          <div class="text-end">
+            <a href="/tabel-buku" class="btn btn-danger text-white">Batal</a>
+            <button type="submit" class="btn text-white" style="background-color: #11007e;">Simpan Perubahan</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Fetch data buku dan isi form
+    const id = window.location.pathname.split("/").pop();
+    fetch(`/buku/${id}`)
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("editForm").action = `/tabel-buku/edit/${id}`;
+        document.getElementById("judul").value = data.judul;
+        document.getElementById("penulis").value = data.penulis;
+        document.getElementById("penerbit").value = data.penerbit;
+        document.getElementById("tahun_terbit").value = data.tahun_terbit;
+        document.getElementById("kategori").value = data.kategori;
+        document.getElementById("lokasi_rak").value = data.lokasi_rak;
+        document.getElementById("deskripsi").value = data.deskripsi;
+      });
+
+    // Menampilkan username dari cookie
+    fetch('/users-info')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.username) {
+          document.getElementById('usernameDisplay').textContent = data.username;
+        }
+      });
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

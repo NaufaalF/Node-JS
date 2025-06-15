@@ -6,6 +6,8 @@ const User = db.define('users', {
     nama:DataTypes.STRING,
     email:DataTypes.STRING,
     password:DataTypes.STRING,
+    alamat:DataTypes.STRING,
+    no_telp:DataTypes.STRING,
     role:DataTypes.ENUM('anggota', 'admin')
 }, {
     freezeTableName: true,

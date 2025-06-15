@@ -89,6 +89,21 @@ export const updateBuku = async (req, res) => {
   }
 };
 
+// Kirim gambar cover buku
+export const getCover = async (req, res) => {
+  try {
+    const buku = await Buku.findByPk(req.params.id);
+    if (!buku || !buku.cover) {
+      return res.status(404).send('Cover tidak ditemukan');
+    }
+    res.set('Content-Type', 'image/jpeg'); // atau image/png jika cover-nya png
+    res.send(buku.cover);
+  } catch (err) {
+    res.status(500).send('Gagal menampilkan cover: ' + err.message);
+  }
+};
+
+
 // Hapus buku
 export const deleteBuku = async (req, res) => {
   try {

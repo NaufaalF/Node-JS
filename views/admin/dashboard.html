@@ -59,10 +59,11 @@
             <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar border-end">
                 <div class="position-sticky">
                     <ul class="nav flex-column p-3 gap-3">
-                        <li class="nav-item d-flex align-items-center mb-2 active">
+                        <li class="nav-item d-flex align-items-center mb-2">
                             <i class="fa-solid fa-chart-line logo-book fa-2x d-flex justify-content-center"
                                 style="color: #11007e; width: 50px;"></i>
-                            <a class="nav-link p-1 fw-bold" style="color:#11007e; font-size: large;" href="/dashboard">
+                            <a class="nav-link p-1 fw-bold" style="color: #11007e; font-size: large;"
+                                href="/dashboard">
                                 Dashboard
                             </a>
                         </li>
@@ -80,22 +81,6 @@
                             <a class="nav-link p-1 fw-bold" style="color: #11007e; font-size: large;"
                                 href="/tabel-user">
                                 User
-                            </a>
-                        </li>
-                        <li class="nav-item d-flex align-items-center mb-2">
-                            <i class="fa-solid fa-user-tie logo-book fa-2x d-flex justify-content-center"
-                                style="color: #11007e; width: 50px;"></i>
-                            <a class="nav-link p-1 fw-bold" style="color: #11007e; font-size: large;"
-                                href="/tabel-admin">
-                                Admin
-                            </a>
-                        </li>
-                        <li class="nav-item d-flex align-items-center mb-2">
-                            <i class="fa-solid fa-user logo-book fa-2x d-flex justify-content-center"
-                                style="color: #11007e; width: 50px;"></i>
-                            <a class="nav-link p-1 fw-bold" style="color: #11007e; font-size: large;"
-                                href="/tabel-anggota">
-                                Anggota
                             </a>
                         </li>
                         <li class="nav-item d-flex align-items-center mb-2">
@@ -161,46 +146,6 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Total Admin -->
-                    <div class="col-6 col-md-3 mb-4">
-                        <div class="card text-center">
-                            <div class="card-body">
-                                <div class="row align-items-center">
-                                    <div class="col-auto">
-                                        <i class="fa-solid fa-user-tie logo-book fa-3x"
-                                            style="color: #11007e; width: 50px;"></i>
-                                    </div>
-                                    <div class="col text-start">
-                                        <h4 class="fw-bold"
-                                            style="padding-bottom: 0px; margin-bottom: 0%; color: #11007e;">Total Admin
-                                        </h4>
-                                        <h5 id="totalAdmin"
-                                            style="padding-bottom: 0px; margin-bottom: 0%; color: #11007e;">0</h5>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Total Anggota -->
-                    <div class="col-6 col-md-3 mb-4">
-                        <div class="card text-center">
-                            <div class="card-body">
-                                <div class="row align-items-center">
-                                    <div class="col-auto">
-                                        <i class="fa-solid fa-user logo-book fa-3x"
-                                            style="color: #11007e; width: 50px;"></i>
-                                    </div>
-                                    <div class="col text-start">
-                                        <h4 class="fw-bold"
-                                            style="padding-bottom: 0px; margin-bottom: 0%; color: #11007e;">Total
-                                            Anggota</h4>
-                                        <h5 id="totalAnggota"
-                                            style="padding-bottom: 0px; margin-bottom: 0%; color: #11007e;">0</h5>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     <!-- Total Buku -->
                     <div class="col-6 col-md-3 mb-4">
                         <div class="card text-center">
@@ -229,8 +174,6 @@
                         .then(data => {
                             document.getElementById('totalPinjam').textContent = data.totalPinjam;
                             document.getElementById('totalUser').textContent = data.totalUser;
-                            document.getElementById('totalAdmin').textContent = data.totalAdmin;
-                            document.getElementById('totalAnggota').textContent = data.totalAnggota;
                             document.getElementById('totalBuku').textContent = data.totalBuku;
                         });
                     fetch('/users-info')

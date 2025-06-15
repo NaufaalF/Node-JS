@@ -35,10 +35,8 @@ export const getDashboardData = async (req, res) => {
     }
     const totalPinjam = await Peminjaman.count();
     const totalUser = await User.count();
-    const totalAdmin = await User.count({ where: { role: 'admin' } });
-    const totalAnggota = await User.count({ where: { role: 'anggota' } });
     const totalBuku = await Buku.count();
-    res.json({ totalPinjam, totalUser, totalAdmin, totalAnggota, totalBuku });
+    res.json({ totalPinjam, totalUser, totalBuku });
   } catch (err) {
     res.status(500).json({ message: 'Internal Server Error' });
   }

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tambah User</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body style="background-color: #f0ecec;">
+  <script src="https://kit.fontawesome.com/808ba9c7d8.js" crossorigin="anonymous"></script>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light py-3" style="background-color: #11007e;">
+        <div class="container-fluid px-5">
+            <a href="#">
+                <i class="fa-solid fa-chart-line logo-book"></i>
+            </a>
+            <h3 class="text-white fw-bold" style="margin-bottom: 0px;">Dashboard</h3>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="profilDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <span id="usernameDisplay">Profil</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profilDropdown">
+                            <li>
+                                <a class="dropdown-item" href="/logout">Logout</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+  <!-- Upload Form -->
+  <div class="container d-flex align-items-center" style="height: auto;">
+    <div class="container mt-5 mb-5 border-0 shadow-sm container-upload-buku">
+      <div class="row" style="margin: 10px;">
+        <div class="container d-flex justify-content-center mb-5">
+          <div class="row align-items-center">
+            <div class="col-auto">
+              <i class="fa-solid fa-users logo-book fa-4x" style="color: #11007e;"></i>
+            </div>
+            <div class="col" style="max-width:max-content;">
+              <h1 class="fw-bold" style="padding-bottom: 0; color: #11007e;">Tambah User</h1>
+            </div>
+          </div>
+        </div>
+
+        <form action="/tabel-user/tambah" method="POST">
+          <div class="mb-3 row">
+            <label class="col-sm-3 col-form-label fw-bold">Nama</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" name="nama" required>
+            </div>
+          </div>
+
+          <div class="mb-3 row">
+            <label class="col-sm-3 col-form-label fw-bold">Email</label>
+            <div class="col-sm-9">
+              <input type="email" class="form-control" name="email" required>
+            </div>
+          </div>
+
+          <div class="mb-3 row">
+            <label class="col-sm-3 col-form-label fw-bold">Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control" name="password" required>
+            </div>
+          </div>
+
+          <div class="mb-3 row">
+            <label class="col-sm-3 col-form-label fw-bold">Alamat</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" name="alamat" required>
+            </div>
+          </div>
+
+          <div class="mb-3 row">
+            <label class="col-sm-3 col-form-label fw-bold">No Telepon</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" name="no_telp" required>
+            </div>
+          </div>
+
+          <div class="mb-3 row">
+            <label class="col-sm-3 col-form-label fw-bold"for="role">Role</label>
+            <div class="col-sm-9">
+                <select id="role" name="role" class="form-control" required>
+                    <option value="anggota">Anggota</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+          </div>
+
+          <div class="text-end">
+            <a href="/tabel-user" class="btn btn-danger text-white">Cancel</a>
+            <button type="submit" class="btn text-white" style="background-color: #11007e;">Tambah User</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script>
+    fetch('/users-info')
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data && data.username) {
+                                document.getElementById('usernameDisplay').textContent = data.username;
+                            }
+                        });
+  </script>
+</body>
+</html>

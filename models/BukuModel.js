@@ -8,8 +8,12 @@ const Buku = db.define('buku', {
     kategori: DataTypes.STRING,
     lokasi_rak: DataTypes.STRING,
     penerbit: DataTypes.STRING,
-    ketersediaan: DataTypes.ENUM('tersedia', 'dipinjam'),
+    ketersediaan: {
+        type: DataTypes.ENUM('tersedia', 'dipinjam'),
+        defaultValue: 'tersedia',
+    },
     tahun_terbit: DataTypes.INTEGER,
+    deskripsi: DataTypes.TEXT,
     cover: DataTypes.BLOB, // atau STRING jika URL
 }, {
     freezeTableName: true,

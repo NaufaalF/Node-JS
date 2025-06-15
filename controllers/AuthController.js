@@ -17,12 +17,14 @@ export const getLogin = (req, res) => {
 
 // Proses register tanpa bcrypt
 export const register = async (req, res) => {
-  const { nama, email, password, role } = req.body;
+  const { nama, email, password, alamat, no_telp, role } = req.body;
   try {
     await User.create({
       nama,
       email,
-      password, // password langsung disimpan (plain text)
+      password,
+      alamat,
+      no_telp,
       role
     });
     // Redirect ke halaman login setelah berhasil register
