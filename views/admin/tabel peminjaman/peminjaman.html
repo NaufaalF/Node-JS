@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -33,6 +34,7 @@
     }
   </style>
 </head>
+
 <body>
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-light py-3" style="background-color: #11007e;">
@@ -69,20 +71,32 @@
         <div class="position-sticky">
           <ul class="nav flex-column p-3 gap-3">
             <li class="nav-item d-flex align-items-center mb-2">
-              <i class="fa-solid fa-chart-line fa-2x" style="color: #11007e; width: 50px;"></i>
-              <a class="nav-link p-1 fw-bold" style="color:#11007e; font-size: large;" href="/dashboard">Peminjaman</a>
+              <i class="fa-solid fa-chart-line logo-book fa-2x d-flex justify-content-center"
+                style="color: #11007e; width: 50px;"></i>
+              <a class="nav-link p-1 fw-bold" style="color: #11007e; font-size: large;" href="/dashboard">
+                Dashboard
+              </a>
             </li>
             <li class="nav-item d-flex align-items-center mb-2">
-              <i class="fa-solid fa-bookmark fa-2x" style="color: #11007e; width: 50px;"></i>
-              <a class="nav-link p-1 fw-bold" style="color:#11007e; font-size: large;" href="/tabel-peminjaman">Peminjaman</a>
+              <i class="fa-solid fa-bookmark logo-book fa-2x d-flex justify-content-center"
+                style="color: #11007e; width: 50px;"></i>
+              <a class="nav-link p-1 fw-bold" style="color: #11007e; font-size: large;" href="/tabel-peminjaman">
+                Peminjaman
+              </a>
             </li>
             <li class="nav-item d-flex align-items-center mb-2">
-              <i class="fa-solid fa-users fa-2x" style="color: #11007e; width: 50px;"></i>
-              <a class="nav-link p-1 fw-bold" style="color:#11007e; font-size: large;" href="/tabel-user">User</a>
+              <i class="fa-solid fa-users logo-book fa-2x d-flex justify-content-center"
+                style="color: #11007e; width: 50px;"></i>
+              <a class="nav-link p-1 fw-bold" style="color: #11007e; font-size: large;" href="/tabel-user">
+                User
+              </a>
             </li>
             <li class="nav-item d-flex align-items-center mb-2">
-              <i class="fa-solid fa-book fa-2x" style="color: #11007e; width: 50px;"></i>
-              <a class="nav-link p-1 fw-bold" style="color:#11007e; font-size: large;" href="/tabel-buku">Buku</a>
+              <i class="fa-solid fa-book logo-book fa-2x d-flex justify-content-center"
+                style="color: #11007e; width: 50px;"></i>
+              <a class="nav-link p-1 fw-bold" style="color: #11007e; font-size: large;" href="/tabel-buku">
+                Buku
+              </a>
             </li>
           </ul>
         </div>
@@ -110,8 +124,8 @@
                 <th>Tanggal Pinjam</th>
                 <th>Tanggal Kembali</th>
                 <th>Status</th>
-                <th>Aksi</th>
                 <th>Konfirmasi</th>
+                <th>Aksi</th>
               </tr>
             </thead>
             <tbody id="isi-tabel">
@@ -138,10 +152,22 @@
       const tbody = document.getElementById("isi-tabel");
 
       peminjamanList.forEach((peminjaman) => {
+        // Ambil id dan nama anggota
         let anggotaId = peminjaman.users_id || (peminjaman.User && peminjaman.User.id);
-        let nama = (peminjaman.User && peminjaman.User.nama) ? peminjaman.User.nama : anggotaId;
+        let namaAnggota = '-';
+        if (peminjaman.User && peminjaman.User.nama) {
+          namaAnggota = peminjaman.User.nama;
+        } else if (peminjaman.user && peminjaman.user.nama) {
+          namaAnggota = peminjaman.user.nama;
+        }
+        // Ambil id dan judul buku
         let bukuId = peminjaman.buku_id || (peminjaman.Buku && peminjaman.Buku.id);
-        let judul = (peminjaman.Buku && peminjaman.Buku.judul) ? peminjaman.Buku.judul : bukuId;
+        let judulBuku = '-';
+        if (peminjaman.Buku && peminjaman.Buku.judul) {
+          judulBuku = peminjaman.Buku.judul;
+        } else if (peminjaman.buku && peminjaman.buku.judul) {
+          judulBuku = peminjaman.buku.judul;
+        }
         let konfirmasiBtn = '';
         if (peminjaman.status_peminjaman === 'menunggu') {
           konfirmasiBtn = `<button class="btn btn-success btn-sm" onclick="openKonfirmasiModal(${peminjaman.id})">Konfirmasi</button>`;
@@ -153,11 +179,12 @@
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${peminjaman.id}</td>
-          <td>${anggotaId} - ${nama}</td>
-          <td>${bukuId} - ${judul}</td>
+          <td>${anggotaId} - ${namaAnggota}</td>
+          <td>${bukuId} - ${judulBuku}</td>
           <td>${formatTanggal(peminjaman.tanggal_pinjam)}</td>
           <td>${formatTanggal(peminjaman.tanggal_kembali)}</td>
-          <td>${peminjaman.status_peminjaman}</td>
+          <td>${badgeStatus(peminjaman.status_peminjaman)}</td>
+          <td>${konfirmasiBtn}</td>
           <td>
             <div class="d-flex justify-content-center gap-1">
               <a href="/tabel-peminjaman/edit/${peminjaman.id}" class="btn btn-sm btn-warning">Edit</a>
@@ -166,7 +193,6 @@
               </form>
             </div>
           </td>
-          <td>${konfirmasiBtn}</td>
         `;
         tbody.appendChild(tr);
       });
@@ -227,7 +253,7 @@
       konfirmasiModal.show();
     }
 
-    document.getElementById('formKonfirmasi').onsubmit = async function(e) {
+    document.getElementById('formKonfirmasi').onsubmit = async function (e) {
       e.preventDefault();
       const id = document.getElementById('modalPeminjamanId').value;
       const tanggal_pinjam = document.getElementById('modalTanggalPinjam').value;
@@ -249,6 +275,15 @@
       });
       location.reload();
     }
+
+    // Fungsi untuk badge status
+    function badgeStatus(status) {
+      if (status === 'menunggu') return '<span class="badge bg-danger">Menunggu</span>';
+      if (status === 'dipinjam') return '<span class="badge bg-warning text-dark">Dipinjam</span>';
+      if (status === 'selesai') return '<span class="badge bg-success">Selesai</span>';
+      return status;
+    }
   </script>
 </body>
+
 </html>
