@@ -10,17 +10,25 @@ const __dirname = dirname(__filename);
 // Tampilkan halaman daftar peminjaman hanya untuk user yang sedang login
 export const getAllPeminjaman = async (req, res) => {
   try {
-    // Ambil id user dari cookie (isLoggedInId) atau session
     const userId = req.cookies && req.cookies.isLoggedInId;
-    if (!userId) {
-      return res.status(401).json({ message: 'Unauthorized: User belum login' });
+    const userRole = req.cookies && req.cookies.isLoggedInRole;
+    let peminjaman;
+    if (userRole === 'admin') {
+      peminjaman = await Peminjaman.findAll({
+        include: [User, Buku]
+      });
+    } else {
+      if (!userId) {
+        return res.status(401).json({ message: 'Unauthorized: User belum login' });
+      }
+      peminjaman = await Peminjaman.findAll({
+        where: { users_id: userId },
+        include: [User, Buku]
+      });
     }
-    const peminjaman = await Peminjaman.findAll({
-      where: { anggota_id: userId },
-      include: [User, Buku]
-    });
     res.json(peminjaman);
   } catch (err) {
+    
     res.status(500).json({ message: err.message });
   }
 };
@@ -32,16 +40,13 @@ export const getFormPeminjaman = (req, res) => {
   res.sendFile(path.join(__dirname, '../views/user/peminjaman.html'));
 };
 
-// Tambah data peminjaman
+// Tambah data peminjaman (API)
 export const createPeminjaman = async (req, res) => {
-  const { users_id, buku_id, tanggal_pinjam, tanggal_kembali, status_peminjaman } = req.body;
-  console.log({ users_id, buku_id, tanggal_pinjam, tanggal_kembali, status_peminjaman });
+  const { users_id, buku_id, status_peminjaman } = req.body;
   try {
     const peminjaman = await Peminjaman.create({
       users_id,
       buku_id,
-      tanggal_pinjam,
-      tanggal_kembali: null,
       status_peminjaman
     });
     // Update status ketersediaan buku menjadi 'dipinjam'
@@ -49,6 +54,22 @@ export const createPeminjaman = async (req, res) => {
     res.status(201).json(peminjaman);
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+
+// Tambah data peminjaman (ADMIN FORM)
+export const createPeminjamanAdmin = async (req, res) => {
+  const { users_id, buku_id, status_peminjaman } = req.body;
+  try {
+    await Peminjaman.create({
+      users_id,
+      buku_id,
+      status_peminjaman
+    });
+    await Buku.update({ ketersediaan: 'dipinjam' }, { where: { id: buku_id } });
+    res.redirect('/tabel-peminjaman');
+  } catch (err) {
+    res.status(500).send('Gagal menambah peminjaman: ' + err.message);
   }
 };
 
@@ -99,12 +120,22 @@ export const updatePeminjaman = async (req, res) => {
 // Update status peminjaman
 export const updateStatusPeminjaman = async (req, res) => {
   const { id } = req.params;
-  const { status_peminjaman } = req.body;
+  const { status_peminjaman, tanggal_pinjam, tanggal_kembali, buku_id } = req.body;
   try {
     const peminjaman = await Peminjaman.findByPk(id);
     if (!peminjaman) return res.status(404).json({ message: 'Data tidak ditemukan' });
     peminjaman.status_peminjaman = status_peminjaman;
+    if (tanggal_pinjam) peminjaman.tanggal_pinjam = tanggal_pinjam;
+    if (tanggal_kembali) peminjaman.tanggal_kembali = tanggal_kembali;
     await peminjaman.save();
+    // Jika status selesai, update status buku menjadi tersedia
+    if (status_peminjaman === 'selesai' && (buku_id || peminjaman.buku_id)) {
+      await Buku.update({ ketersediaan: 'tersedia' }, { where: { id: buku_id || peminjaman.buku_id } });
+    }
+    // Jika status dipinjam, update status buku menjadi dipinjam
+    if (status_peminjaman === 'dipinjam' && (buku_id || peminjaman.buku_id)) {
+      await Buku.update({ ketersediaan: 'dipinjam' }, { where: { id: buku_id || peminjaman.buku_id } });
+    }
     res.json(peminjaman);
   } catch (err) {
     res.status(500).json({ message: err.message });

@@ -54,12 +54,12 @@
 
         <div class="mb-3">
           <label for="tanggal_pinjam" class="form-label fw-bold">Tanggal Pinjam</label>
-          <input type="date" class="form-control" id="tanggal_pinjam" name="tanggal_pinjam" required />
+          <input type="date" class="form-control" id="tanggal_pinjam" name="tanggal_pinjam"/>
         </div>
 
         <div class="mb-3">
           <label for="tanggal_kembali" class="form-label fw-bold">Tanggal Kembali</label>
-          <input type="date" class="form-control" id="tanggal_kembali" name="tanggal_kembali" />
+          <input type="date" class="form-control" id="tanggal_kembali" name="tanggal_kembali"/>
         </div>
 
         <div class="mb-3 row">
@@ -88,8 +88,8 @@
   <script>
     async function loadDropdownData() {
       const [usersRes, bukuRes] = await Promise.all([
-        fetch('/api/users'),
-        fetch('/api/buku')
+        fetch('/users'), // ganti dari /api/users ke /users
+        fetch('/buku')   // ganti dari /api/buku ke /buku
       ]);
       const daftarAnggota = await usersRes.json();
       const daftarBuku = await bukuRes.json();
@@ -97,16 +97,16 @@
       const usersSelect = document.getElementById('users_id');
       daftarAnggota.forEach(a => {
         const opt = document.createElement('option');
-        opt.value = a.id;
-        opt.textContent = `${a.id} - ${a.name}`;
+        opt.value = a.id || a.users_id || a.ID || a.user_id; // fallback jika field id berbeda
+        opt.textContent = `${opt.value} - ${a.nama || a.name || a.email}`;
         usersSelect.appendChild(opt);
       });
 
       const bukuSelect = document.getElementById('buku_id');
       daftarBuku.forEach(b => {
         const opt = document.createElement('option');
-        opt.value = b.id;
-        opt.textContent = `${b.id} - ${b.title}`;
+        opt.value = b.id || b.buku_id || b.ID;
+        opt.textContent = `${opt.value} - ${b.judul || b.title}`;
         bukuSelect.appendChild(opt);
       });
     }

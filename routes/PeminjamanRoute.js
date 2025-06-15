@@ -8,7 +8,8 @@ import {
   tampilkanTabelPeminjaman,
   showUploadForm,
   showEditForm,
-  updatePeminjaman
+  updatePeminjaman,
+  createPeminjamanAdmin
 } from '../controllers/PeminjamanController.js';
 import { requireLogin } from '../controllers/AuthController.js';
 
@@ -31,7 +32,7 @@ router.get('/tabel-peminjaman', requireLogin, tampilkanTabelPeminjaman)
 
 // Tambah peminjaman
 router.get('/tabel-peminjaman/tambah', requireLogin, showUploadForm)
-router.post('/tabel-peminjaman/tambah', requireLogin, createPeminjaman)
+router.post('/tabel-peminjaman/tambah', requireLogin, createPeminjamanAdmin)
 
 // Edit Peminjaman
 router.get('/tabel-peminjaman-edit/:id', showEditForm)

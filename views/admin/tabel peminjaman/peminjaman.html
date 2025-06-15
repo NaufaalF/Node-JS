@@ -105,12 +105,13 @@
             <thead class="table-dark">
               <tr>
                 <th>ID</th>
-                <th>Nama</th>
-                <th>Buku</th>
+                <th>ID - Nama Anggota</th>
+                <th>ID - Nama Buku</th>
                 <th>Tanggal Pinjam</th>
                 <th>Tanggal Kembali</th>
                 <th>Status</th>
                 <th>Aksi</th>
+                <th>Konfirmasi</th>
               </tr>
             </thead>
             <tbody id="isi-tabel">
@@ -137,13 +138,25 @@
       const tbody = document.getElementById("isi-tabel");
 
       peminjamanList.forEach((peminjaman) => {
+        let anggotaId = peminjaman.users_id || (peminjaman.User && peminjaman.User.id);
+        let nama = (peminjaman.User && peminjaman.User.nama) ? peminjaman.User.nama : anggotaId;
+        let bukuId = peminjaman.buku_id || (peminjaman.Buku && peminjaman.Buku.id);
+        let judul = (peminjaman.Buku && peminjaman.Buku.judul) ? peminjaman.Buku.judul : bukuId;
+        let konfirmasiBtn = '';
+        if (peminjaman.status_peminjaman === 'menunggu') {
+          konfirmasiBtn = `<button class="btn btn-success btn-sm" onclick="openKonfirmasiModal(${peminjaman.id})">Konfirmasi</button>`;
+        } else if (peminjaman.status_peminjaman === 'dipinjam') {
+          konfirmasiBtn = `<button class="btn btn-primary btn-sm" onclick="selesaikanPeminjaman(${peminjaman.id}, ${peminjaman.buku_id})">Selesai</button>`;
+        } else {
+          konfirmasiBtn = '-';
+        }
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${peminjaman.id}</td>
-          <td>${peminjaman.anggota_id}</td>
-          <td>${peminjaman.buku_id}</td>
-          <td>${peminjaman.tanggal_pinjam}</td>
-          <td>${peminjaman.tanggal_kembali}</td>
+          <td>${anggotaId} - ${nama}</td>
+          <td>${bukuId} - ${judul}</td>
+          <td>${formatTanggal(peminjaman.tanggal_pinjam)}</td>
+          <td>${formatTanggal(peminjaman.tanggal_kembali)}</td>
           <td>${peminjaman.status_peminjaman}</td>
           <td>
             <div class="d-flex justify-content-center gap-1">
@@ -153,10 +166,19 @@
               </form>
             </div>
           </td>
+          <td>${konfirmasiBtn}</td>
         `;
         tbody.appendChild(tr);
       });
     });
+
+    // Format tanggal agar tampil lokal (YYYY-MM-DD)
+    function formatTanggal(tgl) {
+      if (!tgl) return '-';
+      const d = new Date(tgl);
+      if (isNaN(d)) return tgl;
+      return d.toLocaleDateString('id-ID');
+    }
 
     // Ambil nama pengguna
     fetch('/users-info')
@@ -166,6 +188,67 @@
           document.getElementById('usernameDisplay').textContent = data.username;
         }
       });
+
+    // Modal Konfirmasi
+    const modalHtml = `
+    <div class="modal fade" id="konfirmasiModal" tabindex="-1" aria-labelledby="konfirmasiModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="konfirmasiModalLabel">Konfirmasi Peminjaman</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="formKonfirmasi">
+              <input type="hidden" id="modalPeminjamanId" />
+              <div class="mb-3">
+                <label for="modalTanggalPinjam" class="form-label">Tanggal Pinjam</label>
+                <input type="date" class="form-control" id="modalTanggalPinjam" required />
+              </div>
+              <div class="mb-3">
+                <label for="modalTanggalKembali" class="form-label">Tanggal Kembali</label>
+                <input type="date" class="form-control" id="modalTanggalKembali" required />
+              </div>
+              <button type="submit" class="btn btn-success">Konfirmasi</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>`;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+    let konfirmasiModal;
+    function openKonfirmasiModal(id) {
+      document.getElementById('modalPeminjamanId').value = id;
+      document.getElementById('formKonfirmasi').reset();
+      if (!konfirmasiModal) {
+        konfirmasiModal = new bootstrap.Modal(document.getElementById('konfirmasiModal'));
+      }
+      konfirmasiModal.show();
+    }
+
+    document.getElementById('formKonfirmasi').onsubmit = async function(e) {
+      e.preventDefault();
+      const id = document.getElementById('modalPeminjamanId').value;
+      const tanggal_pinjam = document.getElementById('modalTanggalPinjam').value;
+      const tanggal_kembali = document.getElementById('modalTanggalKembali').value;
+      await fetch(`/peminjaman/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status_peminjaman: 'dipinjam', tanggal_pinjam, tanggal_kembali })
+      });
+      konfirmasiModal.hide();
+      location.reload();
+    };
+
+    async function selesaikanPeminjaman(id, buku_id) {
+      await fetch(`/peminjaman/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status_peminjaman: 'selesai', buku_id })
+      });
+      location.reload();
+    }
   </script>
 </body>
 </html>
