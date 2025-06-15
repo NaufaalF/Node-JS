@@ -34,11 +34,11 @@ export const getFormPeminjaman = (req, res) => {
 
 // Tambah data peminjaman
 export const createPeminjaman = async (req, res) => {
-  const { anggota_id, buku_id, tanggal_pinjam, tanggal_kembali, status_peminjaman } = req.body;
-  console.log({ anggota_id, buku_id, tanggal_pinjam, tanggal_kembali, status_peminjaman });
+  const { users_id, buku_id, tanggal_pinjam, tanggal_kembali, status_peminjaman } = req.body;
+  console.log({ users_id, buku_id, tanggal_pinjam, tanggal_kembali, status_peminjaman });
   try {
     const peminjaman = await Peminjaman.create({
-      anggota_id,
+      users_id,
       buku_id,
       tanggal_pinjam,
       tanggal_kembali: null,
@@ -53,6 +53,48 @@ export const createPeminjaman = async (req, res) => {
 };
 
 // =============================== Admin ==============================
+
+export const tampilkanTabelPeminjaman = async (req, res) => {
+  try {
+    // Data peminjaman bisa di-fetch via API di frontend
+    res.sendFile(path.join(__dirname, '../views/admin/tabel peminjaman/peminjaman.html'));
+  } catch (err) {
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+export const showUploadForm = (req, res) => {
+  res.sendFile(path.join(__dirname, '../views/admin/tabel peminjaman/tambahPeminjaman.html'));
+};
+
+export const showEditForm = async (req, res) => {
+  try {
+    const users = await User.findByPk(req.params.id);
+    if (!users) return res.redirect('/tabel-user');
+    // Data user bisa di-fetch via API di frontend
+    res.sendFile(path.join(__dirname, '../views/admin/tabel user/editUser.html'));
+  } catch (err) {
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+// Update user (POST)
+export const updatePeminjaman = async (req, res) => {
+  try {
+    const peminjaman = await Peminjaman.findByPk(req.params.id);
+    if (!peminjaman) return res.redirect('/tabel-peminjaman');
+    const { users_id, buku_id, tanggal_pinjam, tanggal_kembali, status_peminjaman } = req.body;
+    peminjaman.users_id = users_id;
+    peminjaman.buku_id = buku_id;
+    peminjaman.tanggal_pinjam = tanggal_pinjam;
+    peminjaman.tanggal_kembali = tanggal_kembali;
+    peminjaman.status_peminjaman = status_peminjaman;
+    await peminjaman.save();
+    res.redirect('/tabel-peminjaman');
+  } catch (err) {
+    res.status(500).send('Gagal update user: ' + err.message);
+  }
+};
 
 // Update status peminjaman
 export const updateStatusPeminjaman = async (req, res) => {

@@ -1,122 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Riwayat Peminjaman</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css">
-    <script src="https://kit.fontawesome.com/808ba9c7d8.js" crossorigin="anonymous"></script>
-    <style>
-        html,
-        body {
-            height: 100%;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tabel Peminjaman</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="https://kit.fontawesome.com/808ba9c7d8.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
 
-        body {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+  <style>
+    .nav-item.active {
+      border-left: 4px solid #11007e;
+    }
 
-        .container.mt-5 {
-            flex: 1 0 auto;
-        }
+    .nav-item.active .nav-link {
+      color: #11007e;
+    }
 
-        footer {
-            flex-shrink: 0;
-        }
-    </style>
+    .button-upload {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #11007e;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
 </head>
-
-<body style="background-color: #f0ecec;">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://kit.fontawesome.com/808ba9c7d8.js" crossorigin="anonymous"></script>
-    <nav class="navbar navbar-expand-lg navbar-light py-3" style="background-color: #55c300;">
-        <div class="container-fluid px-5">
-            <a href="/home">
-                <i class="fa-solid fa-book logo-book"></i>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light py-3" style="background-color: #11007e;">
+    <div class="container-fluid px-5">
+      <a href="#">
+        <i class="fa-solid fa-chart-line logo-book"></i>
+      </a>
+      <h3 class="text-white fw-bold mb-0">Dashboard</h3>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-white" href="#" id="profilDropdown" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              <span id="usernameDisplay">Profil</span>
             </a>
-            <h3 class="text-white fw-bold" style="margin-bottom: 0px;" href="#">Perpustakaan</h3>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                <ul class="navbar-nav gap-3">
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="/home/peminjaman">Peminjaman</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white" href="#" id="profilDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <span id="usernameDisplay">Profil</span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profilDropdown">
-                            <li>
-                                <a class="dropdown-item" href="/logout">Logout</a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container mt-5" id="peminjaman-list">
-        <!-- Data peminjaman akan dimuat lewat JavaScript -->
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profilDropdown">
+              <li><a class="dropdown-item" href="/logout">Logout</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
     </div>
-    <script>
-        // Ambil data peminjaman dari backend
-        fetch('/peminjaman')
-            .then(res => res.json())
-            .then(data => {
-                const container = document.getElementById('peminjaman-list');
-                if (!data.length) {
-                    container.innerHTML = '<div class="alert alert-info">Belum ada data peminjaman.</div>';
-                    return;
-                }
-                container.innerHTML = data.map(peminjaman => `
-          <div class="release-card d-flex mb-3 p-3 bg-white rounded shadow-sm align-items-center">
-            <div class="release-cover me-3">
-              <img src="/images/library-2.jpg" alt="Cover" style="width: 80px; height: 100px; object-fit: cover; margin-left: 15px;">
-            </div>
-            <div class="release-info">
-              <div class="release-title fw-bold">${peminjaman.buku ? peminjaman.buku.judul : '-'}</div>
-              <div class="release-subtitle">
-                <span>ID: ${peminjaman.id}</span> |
-                <span>Pinjam: ${peminjaman.tanggal_pinjam ? peminjaman.tanggal_pinjam.substring(0, 10) : '-'}</span> |
-                <span>Kembali: ${peminjaman.tanggal_kembali ? peminjaman.tanggal_kembali.substring(0, 10) : '-'}</span>
-              </div>
-              <div class="release-subtitle">
-                Status: <span style="font-weight:bold; color:${peminjaman.status_peminjaman === 'menunggu' ? 'red' : peminjaman.status_peminjaman === 'dipinjam' ? 'orange' : 'green'}">${peminjaman.status_peminjaman.charAt(0).toUpperCase() + peminjaman.status_peminjaman.slice(1)}</span>
-              </div>
-            </div>
-          </div>
-        `).join('');
-            })
-            .catch(() => {
-                document.getElementById('peminjaman-list').innerHTML = '<div class="alert alert-danger">Gagal memuat data peminjaman.</div>';
-            });
+  </nav>
 
-        // Tampilkan username jika login
-        fetch('/users-info')
-          .then(res => res.json())
-          .then(data => {
-            if (data && data.username) {
-              document.getElementById('usernameDisplay').textContent = data.username;
-            }
-          });
-    </script>
-
-
-    <footer>
-        <div class="container-fluid bg-light text-center py-3" style="position: relative;">
-            <p class="mb-0">© 2025 Perpustakaan. All rights reserved.</p>
-            <p>Created by <a href="#" class="text-decoration-none">Bojes</a></p>
+  <!-- Sidebar + Main -->
+  <div class="container-fluid" style="height: 90vh;">
+    <div class="row" style="height: 90vh;">
+      <!-- Sidebar -->
+      <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar border-end">
+        <div class="position-sticky">
+          <ul class="nav flex-column p-3 gap-3">
+            <li class="nav-item d-flex align-items-center mb-2">
+              <i class="fa-solid fa-chart-line fa-2x" style="color: #11007e; width: 50px;"></i>
+              <a class="nav-link p-1 fw-bold" style="color:#11007e; font-size: large;" href="/dashboard">Peminjaman</a>
+            </li>
+            <li class="nav-item d-flex align-items-center mb-2">
+              <i class="fa-solid fa-bookmark fa-2x" style="color: #11007e; width: 50px;"></i>
+              <a class="nav-link p-1 fw-bold" style="color:#11007e; font-size: large;" href="/tabel-peminjaman">Peminjaman</a>
+            </li>
+            <li class="nav-item d-flex align-items-center mb-2">
+              <i class="fa-solid fa-users fa-2x" style="color: #11007e; width: 50px;"></i>
+              <a class="nav-link p-1 fw-bold" style="color:#11007e; font-size: large;" href="/tabel-user">User</a>
+            </li>
+            <li class="nav-item d-flex align-items-center mb-2">
+              <i class="fa-solid fa-book fa-2x" style="color: #11007e; width: 50px;"></i>
+              <a class="nav-link p-1 fw-bold" style="color:#11007e; font-size: large;" href="/tabel-buku">Buku</a>
+            </li>
+          </ul>
         </div>
-    </footer>
-</body>
+      </nav>
 
+      <!-- Main Content -->
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-4 p-3">
+        <div class="row align-items-center mb-4">
+          <div class="col-auto">
+            <i class="fa-solid fa-bookmark fa-4x" style="color: #11007e;"></i>
+          </div>
+          <div class="col">
+            <h1 class="fw-bold" style="color: #11007e;">Tabel Peminjaman</h1>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped align-middle text-center" id="tabel-peminjaman">
+            <thead class="table-dark">
+              <tr>
+                <th>ID</th>
+                <th>Nama</th>
+                <th>Buku</th>
+                <th>Tanggal Pinjam</th>
+                <th>Tanggal Kembali</th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="isi-tabel">
+              <!-- Diisi oleh JavaScript -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Tombol Upload -->
+        <a href="/tabel-user/tambah">
+          <div class="button-upload">
+            <i class="fa-solid fa-plus fa-2x text-white"></i>
+          </div>
+        </a>
+      </main>
+    </div>
+  </div>
+
+  <!-- Script: Ambil Data User -->
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const response = await fetch("/peminjaman");
+      const userList = await response.json();
+      const tbody = document.getElementById("isi-tabel");
+
+      userList.forEach((peminjaman) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${peminjaman.id}</td>
+          <td>${peminjaman.users_id}</td>
+          <td>${peminjaman.buku_id}</td>
+          <td>${peminjaman.tanggal_pinjam}</td>
+          <td>${peminjaman.tanggal_kembali}</td>
+          <td>${peminjaman.status_pinjam}</td>
+          <td>
+            <div class="d-flex justify-content-center gap-1">
+              <a href="/tabel-peminjaman/edit/${peminjaman.id}" class="btn btn-sm btn-warning">Edit</a>
+              <form action="/tabel-peminjaman/delete/${peminjaman.id}" method="post" onsubmit="return confirm('Yakin ingin hapus?');">
+                <button class="btn btn-sm btn-danger">Hapus</button>
+              </form>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    });
+
+    // Ambil nama pengguna
+    fetch('/users-info')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.username) {
+          document.getElementById('usernameDisplay').textContent = data.username;
+        }
+      });
+  </script>
+</body>
 </html>

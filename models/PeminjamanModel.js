@@ -7,7 +7,7 @@ import Buku from "./BukuModel.js";
 const Peminjaman = db.define('peminjaman', {
     tanggal_kembali: DataTypes.DATE,
     tanggal_pinjam: DataTypes.DATE,
-    anggota_id: {
+    users_id: {
         type: DataTypes.INTEGER,
         references: {
             model: User,
@@ -21,13 +21,16 @@ const Peminjaman = db.define('peminjaman', {
             key: 'id'
         }
     },
-    status_peminjaman: DataTypes.ENUM('menunggu', 'dipinjam', 'selesai')
+    status_peminjaman: {
+        type: DataTypes.ENUM('menunggu', 'dipinjam', 'selesai'),
+        defaultValue: 'menunggu',
+    }
 }, {
     freezeTableName: true,
 });
 
 // Relasi
-Peminjaman.belongsTo(User, { foreignKey: 'anggota_id' });
+Peminjaman.belongsTo(User, { foreignKey: 'users_id' });
 Peminjaman.belongsTo(Buku, { foreignKey: 'buku_id' });
 
 export default Peminjaman;

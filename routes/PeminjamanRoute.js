@@ -4,7 +4,11 @@ import {
   getFormPeminjaman,
   createPeminjaman,
   updateStatusPeminjaman,
-  deletePeminjaman
+  deletePeminjaman,
+  tampilkanTabelPeminjaman,
+  showUploadForm,
+  showEditForm,
+  updatePeminjaman
 } from '../controllers/PeminjamanController.js';
 import { requireLogin } from '../controllers/AuthController.js';
 
@@ -20,10 +24,23 @@ router.get('/peminjaman', requireLogin, getAllPeminjaman);
 // Tambah data peminjaman
 router.post('/peminjaman', requireLogin, createPeminjaman);
 
+//buat atmint
+
+// Tampilkan tabel peminjaman
+router.get('/tabel-peminjaman', requireLogin, tampilkanTabelPeminjaman)
+
+// Tambah peminjaman
+router.get('/tabel-peminjaman/tambah', requireLogin, showUploadForm)
+router.post('/tabel-peminjaman/tambah', requireLogin, createPeminjaman)
+
+// Edit Peminjaman
+router.get('/tabel-peminjaman-edit/:id', showEditForm)
+router.post('/tabel-peminjaman-edit/:id', updatePeminjaman)
+
 // Update status peminjaman
 router.put('/peminjaman/:id', requireLogin, updateStatusPeminjaman);
 
 // Hapus data peminjaman
-router.delete('/peminjaman/:id', requireLogin, deletePeminjaman);
+router.post('/tabel-peminjaman/delete/:id', requireLogin, deletePeminjaman);
 
 export default router;
