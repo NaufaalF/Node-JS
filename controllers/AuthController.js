@@ -44,9 +44,31 @@ export const login = async (req, res) => {
     if (user.password !== password) {
       return res.send('Password salah');
     }
-    res.send(`Login berhasil. Selamat datang, ${user.nama} (${user.role})`);
+    // Set cookie login
+    res.cookie('isLoggedIn', 'true');
+    res.cookie('isLoggedInId', user.id);
+    // Redirect sesuai role
+    if (user.role === 'admin') {
+      res.redirect('/dashboard');
+    } else {
+      res.redirect('/home');
+    }
   } catch (err) {
     console.error(err);
     res.status(500).send('Gagal login: ' + err.message);
   }
+};
+
+// Logout user (hapus cookie, lalu redirect ke login)
+export const logout = (req, res) => {
+  res.clearCookie('isLoggedIn');
+  res.redirect('/login');
+};
+
+// Middleware untuk cek login
+export const requireLogin = (req, res, next) => {
+  if (!req.cookies || req.cookies.isLoggedIn !== 'true') {
+    return res.redirect('/login');
+  }
+  next();
 };

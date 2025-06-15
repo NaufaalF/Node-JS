@@ -1,11 +1,19 @@
 import express from 'express';
 import path from 'path';
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
 import db from './config/Database.js';
-import * as authController from './controllers/AuthController.js';
+import authRoute from './routes/AuthRoute.js';
+import peminjamanRoute from './routes/PeminjamanRoute.js';
+import dashboardRoute from './routes/DashboardRoute.js';
+import homeRoute from './routes/HomeRoute.js';
+import bukuRoute from './routes/BukuRoute.js';
+import userRoute from './routes/UserRoute.js';
+
+import './models/PeminjamanModel.js';
 
 const app = express();
 const PORT = 3000;
@@ -16,6 +24,8 @@ const __dirname = dirname(__filename);
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Cek koneksi database
@@ -28,11 +38,18 @@ app.get('/', (req, res) => {
   res.redirect('/login');
 });
 
-app.get('/login', authController.getLogin);
-app.post('/login', authController.login);
+app.use(authRoute);
 
-app.get('/register', authController.getRegister);
-app.post('/register', authController.register);
+app.use(homeRoute);
+
+app.use(peminjamanRoute);
+
+app.use(dashboardRoute);
+
+app.use(bukuRoute);
+
+app.use(userRoute);
+
 
 // Jalankan server
 app.listen(PORT, () => {

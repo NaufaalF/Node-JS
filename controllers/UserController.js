@@ -1,5 +1,16 @@
 import User from '../models/UserModel.js';
 
+export const getUserInfo = async (req, res) => {
+    try {
+        const userId = req.cookies && req.cookies.isLoggedInId;
+        if (!userId) return res.json({ username: null });
+        const user = await User.findByPk(userId);
+        res.json({ username: user ? user.nama : null });
+    } catch (err) {
+        res.json({ username: null });
+    }
+}
+
 export const getUsers = async (req, res) => {
     try {
         const response = await User.findAll();
