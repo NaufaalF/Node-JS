@@ -208,6 +208,21 @@ export const updateStatusPeminjaman = async (req, res) => {
   }
 };
 
+export const getPeminjamanById = async (req, res) => {
+  try {
+    const peminjaman = await Peminjaman.findByPk(req.params.id, {
+      include: [
+        { model: User, attributes: ['id', 'nama', 'email'] },
+        { model: Buku, attributes: ['id', 'judul', 'ketersediaan'] }
+      ]
+    });
+    if (!peminjaman) return res.status(404).json({ message: 'Data tidak ditemukan' });
+    res.json(peminjaman);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 // Hapus data peminjaman
 export const deletePeminjaman = async (req, res) => {
   const { id } = req.params;

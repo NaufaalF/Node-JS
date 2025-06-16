@@ -10,7 +10,8 @@ import {
   showEditForm,
   updatePeminjaman,
   createPeminjamanAdmin,
-  getAllPeminjamanUser
+  getAllPeminjamanUser,
+  getPeminjamanById
 } from '../controllers/PeminjamanController.js';
 import { requireLogin } from '../controllers/AuthController.js';
 
@@ -38,8 +39,9 @@ router.get('/tabel-peminjaman/tambah', requireLogin, showUploadForm)
 router.post('/tabel-peminjaman/tambah', requireLogin, createPeminjamanAdmin)
 
 // Edit Peminjaman
-router.get('/tabel-peminjaman-edit/:id', showEditForm)
-router.post('/tabel-peminjaman-edit/:id', updatePeminjaman)
+router.get('/peminjaman/:id', requireLogin, getPeminjamanById);
+router.get('/tabel-peminjaman/edit/:id', showEditForm)
+router.post('/tabel-peminjaman/edit/:id', updatePeminjaman)
 
 // Update status peminjaman
 router.put('/peminjaman/:id', requireLogin, updateStatusPeminjaman);
