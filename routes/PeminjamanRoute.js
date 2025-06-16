@@ -9,13 +9,16 @@ import {
   showUploadForm,
   showEditForm,
   updatePeminjaman,
-  createPeminjamanAdmin
+  createPeminjamanAdmin,
+  getAllPeminjamanUser
 } from '../controllers/PeminjamanController.js';
 import { requireLogin } from '../controllers/AuthController.js';
 
 const router = express.Router();
 
 // Route untuk fetch data peminjaman (untuk frontend)
+router.get('/peminjaman-user', requireLogin, getAllPeminjamanUser
+);
 router.get('/home/peminjaman', requireLogin, getFormPeminjaman
 );
 

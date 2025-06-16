@@ -44,6 +44,42 @@ export const getAllPeminjaman = async (req, res) => {
 
 // ============================ USER AREA ============================
 
+export const getAllPeminjamanUser = async (req, res) => {
+  try {
+    const userId = req.cookies?.isLoggedInId;
+    const userRole = req.cookies?.isLoggedInRole;
+    let peminjaman;
+
+    const includeOptions = [
+      {
+        model: User,
+        attributes: ['id', 'nama', 'email']
+      },
+      {
+        model: Buku,
+        attributes: ['id', 'judul', 'ketersediaan']
+      }
+    ];
+
+    if (userRole === 'admin') {
+      peminjaman = await Peminjaman.findAll({ include: includeOptions });
+    } else {
+      if (!userId) {
+        return res.status(401).json({ message: 'Unauthorized: User belum login' });
+      }
+      peminjaman = await Peminjaman.findAll({
+                where: { users_id: userId },
+
+        include: includeOptions
+      });
+    }
+
+    res.json(peminjaman);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 // Tampilkan form tambah peminjaman
 export const getFormPeminjaman = (req, res) => {
   res.sendFile(path.join(__dirname, '../views/user/peminjaman.html'));
