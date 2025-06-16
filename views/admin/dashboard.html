@@ -91,6 +91,14 @@
                                 Buku
                             </a>
                         </li>
+                        <li class="nav-item d-flex align-items-center mb-2">
+                            <i class="fa-solid fa-comments logo-book fa-2x d-flex justify-content-center"
+                                style="color: #11007e; width: 50px;"></i>
+                            <a class="nav-link p-1 fw-bold" style="color: #11007e; font-size: large;"
+                                href="/tabel-ulasan">
+                                Ulasan
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </nav>
@@ -166,6 +174,26 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Total Ulasan -->
+                    <div class="col-6 col-md-3 mb-4">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-auto">
+                                        <i class="fa-solid fa-comments logo-book fa-3x"
+                                            style="color: #11007e; width: 50px;"></i>
+                                    </div>
+                                    <div class="col text-start">
+                                        <h4 class="fw-bold"
+                                            style="padding-bottom: 0px; margin-bottom: 0%; color: #11007e;">Total Ulasan
+                                        </h4>
+                                        <h5 id="totalUlasan"
+                                            style="padding-bottom: 0px; margin-bottom: 0%; color: #11007e;">0</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <script>
                     // Fetch data dashboard dari backend (buat endpoint /dashboard/api di controller jika belum ada)
@@ -175,6 +203,7 @@
                             document.getElementById('totalPinjam').textContent = data.totalPinjam;
                             document.getElementById('totalUser').textContent = data.totalUser;
                             document.getElementById('totalBuku').textContent = data.totalBuku;
+                            document.getElementById('totalUlasan').textContent = data.totalUlasan;
                         });
                     fetch('/users-info')
                         .then(res => res.json())

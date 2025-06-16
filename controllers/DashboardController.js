@@ -1,6 +1,7 @@
 import User from '../models/UserModel.js';
 import Buku from '../models/BukuModel.js';
 import Peminjaman from '../models/PeminjamanModel.js';
+import Ulasan from '../models/UlasanModel.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -36,7 +37,8 @@ export const getDashboardData = async (req, res) => {
     const totalPinjam = await Peminjaman.count();
     const totalUser = await User.count();
     const totalBuku = await Buku.count();
-    res.json({ totalPinjam, totalUser, totalBuku });
+    const totalUlasan = await Ulasan.count();
+    res.json({ totalPinjam, totalUser, totalBuku, totalUlasan });
   } catch (err) {
     res.status(500).json({ message: 'Internal Server Error' });
   }

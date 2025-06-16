@@ -12,6 +12,7 @@ import dashboardRoute from './routes/DashboardRoute.js';
 import homeRoute from './routes/HomeRoute.js';
 import bukuRoute from './routes/BukuRoute.js';
 import userRoute from './routes/UserRoute.js';
+import ulasanRoute from './routes/UlasanRoute.js';
 
 import './models/PeminjamanModel.js';
 
@@ -52,6 +53,8 @@ app.use(dashboardRoute);
 app.use(bukuRoute);
 
 app.use(userRoute);
+
+app.use(ulasanRoute);
 
 
 // Jalankan server

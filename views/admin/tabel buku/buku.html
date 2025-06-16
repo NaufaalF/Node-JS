@@ -98,6 +98,13 @@
                 Buku
               </a>
             </li>
+            <li class="nav-item d-flex align-items-center mb-2">
+              <i class="fa-solid fa-comments logo-book fa-2x d-flex justify-content-center"
+                style="color: #11007e; width: 50px;"></i>
+              <a class="nav-link p-1 fw-bold" style="color: #11007e; font-size: large;" href="/tabel-ulasan">
+                Ulasan
+              </a>
+            </li>
           </ul>
         </div>
       </nav>
@@ -124,7 +131,7 @@
                 <th>Penerbit</th>
                 <th>Tahun</th>
                 <th>Kategori</th>
-                <th>Deskripsi</th>
+                <th style="max-width: 250px;">Deskripsi</th>
                 <th>Lokasi Rak</th>
                 <th>Ketersediaan</th>
                 <th>Cover</th>
@@ -163,8 +170,8 @@
           <td>${buku.penerbit}</td>
           <td>${buku.tahun_terbit}</td>
           <td>${buku.kategori}</td>
-          <td>
-            <div style="max-height: 100px; max width: 200px; overflow-y: auto; overflow-x: hidden;">
+          <td >
+            <div style="max-width:350px; overflow:auto; white-space:pre-line;">
               ${buku.deskripsi || "-"}
             </div>
           </td>

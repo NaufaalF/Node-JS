@@ -44,10 +44,52 @@
         </div>
     </nav>
 
-    <div class="container mt-5 mb-5 border-0 shadow-sm container-detail-buku">
+    <div class="container mt-5 mb-3 border-0 shadow-sm container-detail-buku">
         <div class="row p-3" id="buku-detail">
             <!-- Detail buku akan dimuat lewat JavaScript -->
         </div>
+        <div class="row p-3">
+            <!-- form ulasan -->
+        </div>
+    </div>
+
+    <!-- Ulasan Buku -->
+    <div class="container mt-3 mb-5 border-0 shadow-sm container-detail-buku">
+        <div class="p-3">
+            <h4 class="fw-bold mb-3">Ulasan Buku</h4>
+            <form id="form-ulasan" class="mb-4">
+                <div class="mb-2">
+                    <label class="form-label fw-bold">Rating</label>
+                    <div class="d-flex align-items-center gap-2">
+                        <button type="button" id="minus-rating" class="btn btn-outline-secondary btn-sm">-</button>
+                        <input type="text" id="input-rating" name="rating" value="1" readonly style="width: 40px; text-align: center;" />
+                        <button type="button" id="plus-rating" class="btn btn-outline-secondary btn-sm">+</button>
+                        <span class="ms-2">(1 - 5)</span>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <label for="input-komentar" class="form-label fw-bold">Komentar</label>
+                    <textarea id="input-komentar" name="komentar" class="form-control" rows="2" maxlength="255" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">Kirim Ulasan</button>
+            </form>
+            <hr class="my-4">
+            <div id="ulasan-list"></div>
+            <button id="lihat-semua-ulasan" class="btn btn-link mt-2" style="display:none;">Lihat ulasan selengkapnya</button>
+        </div>
+    </div>
+
+    <!-- Modal Ulasan Selengkapnya -->
+    <div class="modal fade" id="ulasanModal" tabindex="-1" aria-labelledby="ulasanModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="ulasanModalLabel">Semua Ulasan Buku</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="ulasan-modal-body"></div>
+        </div>
+      </div>
     </div>
 
     <!-- Modal Konfirmasi Peminjaman -->
@@ -162,6 +204,107 @@
                     document.getElementById('usernameDisplay').textContent = data.username;
                 }
             });
+
+        // Ambil dan tampilkan ulasan buku (hanya 1, tombol lihat semua jika ada lebih)
+        let semuaUlasan = [];
+        function renderUlasanList() {
+            const ulasanContainer = document.getElementById('ulasan-list');
+            const btnLihatSemua = document.getElementById('lihat-semua-ulasan');
+            if (!semuaUlasan.length) {
+                ulasanContainer.innerHTML = '<div class="text-muted">Belum ada ulasan untuk buku ini.</div>';
+                btnLihatSemua.style.display = 'none';
+                return;
+            }
+            // Tampilkan hanya 1 ulasan
+            const u = semuaUlasan[0];
+            let namaUser = '-';
+            if (u.User && u.User.nama) {
+                namaUser = u.User.nama;
+            } else if (u.user && u.user.nama) {
+                namaUser = u.user.nama;
+            }
+            ulasanContainer.innerHTML = `
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="fw-bold">${namaUser}</span>
+                            <span class="badge bg-warning text-dark">${u.rating} / 5</span>
+                        </div>
+                        <div>${u.komentar}</div>
+                    </div>
+                </div>
+            `;
+            btnLihatSemua.style.display = semuaUlasan.length > 1 ? 'inline-block' : 'none';
+        }
+        function renderUlasanModal() {
+            const modalBody = document.getElementById('ulasan-modal-body');
+            modalBody.innerHTML = semuaUlasan.map(u => {
+                let namaUser = '-';
+                if (u.User && u.User.nama) {
+                    namaUser = u.User.nama;
+                } else if (u.user && u.user.nama) {
+                    namaUser = u.user.nama;
+                }
+                return `
+                    <div class="card mb-2">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="fw-bold">${namaUser}</span>
+                                <span class="badge bg-warning text-dark">${u.rating} / 5</span>
+                            </div>
+                            <div>${u.komentar}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        function fetchUlasanDanRender() {
+            fetch(`/ulasan/buku/${bukuId}`)
+                .then(res => res.json())
+                .then(ulasanList => {
+                    semuaUlasan = ulasanList;
+                    renderUlasanList();
+                });
+        }
+        document.getElementById('lihat-semua-ulasan').onclick = function() {
+            renderUlasanModal();
+            new bootstrap.Modal(document.getElementById('ulasanModal')).show();
+        };
+        // Panggil saat load dan setelah submit ulasan
+        fetchUlasanDanRender();
+        // Rating tombol + dan -
+        const inputRating = document.getElementById('input-rating');
+        document.getElementById('minus-rating').onclick = function() {
+            let val = parseInt(inputRating.value);
+            if (val > 1) inputRating.value = val - 1;
+        };
+        document.getElementById('plus-rating').onclick = function() {
+            let val = parseInt(inputRating.value);
+            if (val < 5) inputRating.value = val + 1;
+        };
+        // Submit ulasan
+        document.getElementById('form-ulasan').onsubmit = function(e) {
+            e.preventDefault();
+            const rating = parseInt(inputRating.value);
+            const komentar = document.getElementById('input-komentar').value.trim();
+            if (!komentar) return alert('Komentar tidak boleh kosong!');
+            fetch('/ulasan', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ buku_id: bukuId, rating, komentar })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.id) {
+                    document.getElementById('input-komentar').value = '';
+                    inputRating.value = 1;
+                    fetchUlasanDanRender();
+                } else {
+                    alert('Gagal mengirim ulasan!');
+                }
+            })
+            .catch(() => alert('Gagal mengirim ulasan!'));
+        };
     </script>
 
 </body>

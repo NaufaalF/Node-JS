@@ -32,6 +32,7 @@ export const getAllPeminjaman = async (req, res) => {
         return res.status(401).json({ message: 'Unauthorized: User belum login' });
       }
       peminjaman = await Peminjaman.findAll({
+        where: { users_id: userId },
         include: includeOptions
       });
     }
@@ -175,12 +176,14 @@ export const updateStatusPeminjaman = async (req, res) => {
 // Hapus data peminjaman
 export const deletePeminjaman = async (req, res) => {
   const { id } = req.params;
+
   try {
     const peminjaman = await Peminjaman.findByPk(id);
-    if (!peminjaman) return res.redirect('/tabel-peminjaman');
+    if (!peminjaman) return res.status(404).json({ message: 'Data tidak ditemukan' });
+
     await peminjaman.destroy();
-    res.redirect('/tabel-peminjaman');
+    res.json({ message: 'Data berhasil dihapus' });
   } catch (err) {
-    res.status(500).send('Gagal menghapus data: ' + err.message);
+    res.status(500).json({ message: err.message });
   }
 };
