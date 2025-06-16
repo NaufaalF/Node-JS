@@ -140,7 +140,7 @@ export const showEditForm = async (req, res) => {
 
 // Tambah data peminjaman dari admin
 export const createPeminjamanAdmin = async (req, res) => {
-  const { users_id, buku_id, status_peminjaman } = req.body;
+  const { users_id, buku_id, tanggal_pinjam, tanggal_kembali, status_peminjaman } = req.body;
 
   if (!users_id || !buku_id || !status_peminjaman) {
     return res.status(400).send('Data tidak lengkap');
@@ -152,7 +152,7 @@ export const createPeminjamanAdmin = async (req, res) => {
       return res.status(400).send('Buku tidak tersedia');
     }
 
-    await Peminjaman.create({ users_id, buku_id, status_peminjaman });
+    await Peminjaman.create({ users_id, buku_id, tanggal_pinjam, tanggal_kembali, status_peminjaman });
     await Buku.update({ ketersediaan: 'dipinjam' }, { where: { id: buku_id } });
     res.redirect('/tabel-peminjaman');
   } catch (err) {
