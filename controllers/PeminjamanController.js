@@ -45,6 +45,42 @@ export const getAllPeminjaman = async (req, res) => {
 
 // ============================ USER AREA ============================
 
+export const getAllPeminjamanUser = async (req, res) => {
+  try {
+    const userId = req.cookies?.isLoggedInId;
+    const userRole = req.cookies?.isLoggedInRole;
+    let peminjaman;
+
+    const includeOptions = [
+      {
+        model: User,
+        attributes: ['id', 'nama', 'email']
+      },
+      {
+        model: Buku,
+        attributes: ['id', 'judul', 'ketersediaan']
+      }
+    ];
+
+    if (userRole === 'admin') {
+      peminjaman = await Peminjaman.findAll({ include: includeOptions });
+    } else {
+      if (!userId) {
+        return res.status(401).json({ message: 'Unauthorized: User belum login' });
+      }
+      peminjaman = await Peminjaman.findAll({
+                where: { users_id: userId },
+
+        include: includeOptions
+      });
+    }
+
+    res.json(peminjaman);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 // Tampilkan form tambah peminjaman
 export const getFormPeminjaman = (req, res) => {
   res.sendFile(path.join(__dirname, '../views/user/peminjaman.html'));
@@ -105,7 +141,7 @@ export const showEditForm = async (req, res) => {
 
 // Tambah data peminjaman dari admin
 export const createPeminjamanAdmin = async (req, res) => {
-  const { users_id, buku_id, status_peminjaman } = req.body;
+  const { users_id, buku_id, tanggal_pinjam, tanggal_kembali, status_peminjaman } = req.body;
 
   if (!users_id || !buku_id || !status_peminjaman) {
     return res.status(400).send('Data tidak lengkap');
@@ -117,7 +153,7 @@ export const createPeminjamanAdmin = async (req, res) => {
       return res.status(400).send('Buku tidak tersedia');
     }
 
-    await Peminjaman.create({ users_id, buku_id, status_peminjaman });
+    await Peminjaman.create({ users_id, buku_id, tanggal_pinjam, tanggal_kembali, status_peminjaman });
     await Buku.update({ ketersediaan: 'dipinjam' }, { where: { id: buku_id } });
     res.redirect('/tabel-peminjaman');
   } catch (err) {
@@ -167,6 +203,21 @@ export const updateStatusPeminjaman = async (req, res) => {
       await Buku.update({ ketersediaan: 'dipinjam' }, { where: { id: idBuku } });
     }
 
+    res.json(peminjaman);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const getPeminjamanById = async (req, res) => {
+  try {
+    const peminjaman = await Peminjaman.findByPk(req.params.id, {
+      include: [
+        { model: User, attributes: ['id', 'nama', 'email'] },
+        { model: Buku, attributes: ['id', 'judul', 'ketersediaan'] }
+      ]
+    });
+    if (!peminjaman) return res.status(404).json({ message: 'Data tidak ditemukan' });
     res.json(peminjaman);
   } catch (err) {
     res.status(500).json({ message: err.message });
