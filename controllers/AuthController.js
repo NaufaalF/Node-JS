@@ -41,10 +41,10 @@ export const login = async (req, res) => {
   try {
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      return res.send('User tidak ditemukan');
+      return res.redirect('/login?error=1');
     }
     if (user.password !== password) {
-      return res.send('Password salah');
+      return res.redirect('/login?error=1');
     }
     // Set cookie login
     res.cookie('isLoggedIn', 'true');

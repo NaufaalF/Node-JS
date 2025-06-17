@@ -30,7 +30,7 @@ router.get('/ulasan/buku/:buku_id', getUlasanByBuku);
 // Tambah ulasan (user harus login)
 router.post('/ulasan', requireLogin, createUlasan);
 // Hapus ulasan (hanya pemilik/admin)
-router.delete('/ulasan/:id', requireLogin, deleteUlasan);
+router.post('/ulasan/delete/:id', requireLogin, deleteUlasan);
 // Update ulasan (hanya pemilik/admin)
 router.put('/ulasan/:id', requireLogin, updateUlasan);
 

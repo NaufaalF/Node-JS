@@ -36,13 +36,8 @@
                     <input type="text" id="nama" name="no_telp" class="form-control" required>
                 </div>
 
-                <div class="mb-3">
-                    <label for="role" class="form-label">Role:</label>
-                    <select id="role" name="role" class="form-control" required>
-                        <option value="anggota">Anggota</option>
-                        <option value="admin">Admin</option>
-                    </select>
-                </div>
+                <!-- Role disembunyikan, default anggota -->
+                <input type="hidden" id="role" name="role" value="anggota" />
 
                 <div class="d-grid">
                     <button type="submit" class="btn text-white" style="background-color: #55c300;">Register</button>

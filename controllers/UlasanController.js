@@ -93,20 +93,15 @@ export const createUlasanAdmin = async (req, res) => {
 };
 
 // Hapus ulasan (hanya pemilik/admin)
-export const deleteUlasan = async (req, res) => {
+export const deleteUlasan= async (req, res) => {
+  const { id } = req.params;
   try {
-    const { id } = req.params;
-    const users_id = req.cookies && req.cookies.isLoggedInId;
-    const userRole = req.cookies && req.cookies.isLoggedInRole;
     const ulasan = await Ulasan.findByPk(id);
-    if (!ulasan) return res.status(404).json({ message: 'Ulasan tidak ditemukan' });
-    if (userRole !== 'admin' && ulasan.users_id !== users_id) {
-      return res.status(403).json({ message: 'Tidak diizinkan menghapus ulasan ini' });
-    }
+    if (!ulasan) return res.redirect('/tabel-ulasan');
     await ulasan.destroy();
-    res.json({ message: 'Ulasan berhasil dihapus' });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.redirect('/tabel-ulasan');
+  } catch (err) {
+    res.status(500).send('Gagal menghapus data: ' + err.message);
   }
 };
 

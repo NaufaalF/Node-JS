@@ -185,7 +185,7 @@
           <td>
             <div class="d-flex justify-content-center gap-1">
               <a href="/tabel-ulasan/edit/${ulasan.id}" class="btn btn-sm btn-warning">Edit</a>
-              <form action="/ulasan/${ulasan.id}" method="post" onsubmit="return confirm('Yakin ingin hapus?');" style="display:inline;">
+              <form action="/ulasan/delete/${ulasan.id}" method="post" onsubmit="return confirm('Yakin ingin hapus?');" style="display:inline;">
                 <input type="hidden" name="_method" value="DELETE" />
                 <button class="btn btn-sm btn-danger">Hapus</button>
               </form>

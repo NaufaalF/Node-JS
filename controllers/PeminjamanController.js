@@ -1,3 +1,4 @@
+
 import Peminjaman from '../models/PeminjamanModel.js';
 import User from '../models/UserModel.js';
 import Buku from '../models/BukuModel.js';
@@ -32,7 +33,6 @@ export const getAllPeminjaman = async (req, res) => {
         return res.status(401).json({ message: 'Unauthorized: User belum login' });
       }
       peminjaman = await Peminjaman.findAll({
-        where: { users_id: userId },
         include: includeOptions
       });
     }
@@ -227,14 +227,12 @@ export const getPeminjamanById = async (req, res) => {
 // Hapus data peminjaman
 export const deletePeminjaman = async (req, res) => {
   const { id } = req.params;
-
   try {
     const peminjaman = await Peminjaman.findByPk(id);
-    if (!peminjaman) return res.status(404).json({ message: 'Data tidak ditemukan' });
-
+    if (!peminjaman) return res.redirect('/tabel-peminjaman');
     await peminjaman.destroy();
-    res.json({ message: 'Data berhasil dihapus' });
+    res.redirect('/tabel-peminjaman');
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).send('Gagal menghapus data: ' + err.message);
   }
 };
